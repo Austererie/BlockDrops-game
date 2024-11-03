@@ -37,8 +37,34 @@ var f_180 := [Vector2i(0,1), Vector2(1,1), Vector2i(2,1), Vector2i(2,2)]
 var f_270 := [Vector2i(1,0), Vector2i(1,1), Vector2i(0,2), Vector2i(1,2)]
 var f := [f_0, f_90, f_180, f_270]
 
+var g_0 := [Vector2i(0,0), Vector2i(1,0), Vector2i(1,1), Vector2i(2,1)]
+var g_90 := [Vector2i(1,0), Vector2i(0,1), Vector2i(1,1), Vector2i(0,2)]
+var g_180 := [Vector2i(1,0), Vector2i(2,0), Vector2i(0,1), Vector2i(1,1)]
+var g_270 := [Vector2i(0,0), Vector2i(0,1), Vector2i(1,1), Vector2i(1,2)]
+var g := [g_0, g_90, g_180, g_270]
+
+var shapes := [a, b, c, d, e, f, g]
+
+#Grid variables
+const COLS : int = 10
+const ROWS : int = 20
 
 
+#Game piece variables
+var piece_type
+var next_piece_type
+var rotation_index : int = 0
+var active_piece: Array
+
+#Tilemap Variables
+var tile_id : int = 0
+var piece_atlas : Vector2i
+var next_piece_atlas: Vector2i
+
+
+#Layer Variables 
+var board_layer : int = 0
+var active_layer : int = 1
 
 
 #Called when the node enters the scene tree for the first time.
@@ -48,4 +74,9 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	draw_piece(a[0], Vector2i(5,1), Vector2i(3,0))
+
+
+func draw_piece(piece, pos, atlas):
+	for i in piece:
+		set_cell(active_layer, pos + i, tile_id, atlas)
