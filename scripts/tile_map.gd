@@ -44,10 +44,15 @@ var g_270 := [Vector2i(0,0), Vector2i(0,1), Vector2i(1,1), Vector2i(1,2)]
 var g := [g_0, g_90, g_180, g_270]
 
 var shapes := [a, b, c, d, e, f, g]
+var shapes_full := shapes.duplicate()
 
 #Grid variables
 const COLS : int = 10
 const ROWS : int = 20
+
+#Movement variables
+const START_POS := Vector2i(5,1)
+var cur_pos : Vector2i
 
 
 #Game piece variables
@@ -56,7 +61,7 @@ var next_piece_type
 var rotation_index : int = 0
 var active_piece: Array
 
-#Tilemap Variables
+#Tilemap variables
 var tile_id : int = 0
 var piece_atlas : Vector2i
 var next_piece_atlas: Vector2i
@@ -69,14 +74,43 @@ var active_layer : int = 1
 
 #Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	new_game()
+	
+	
+func new_game():
+	piece_type = pick_piece()
+	piece_atlas = Vector2i(shapes_full.find(piece_type), 0)
+	create_piece()
+	
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	draw_piece(a[0], Vector2i(5,1), Vector2i(3,0))
+	pass
 
-
+func pick_piece():
+	var piece
+	if not shapes.is_empty():
+		shapes.shuffle()
+		piece = shapes.pop_front()
+	else:
+		shapes = shapes_full.duplicate()
+		piece = shapes.pop_front()
+	return piece
+		
+	
+func create_piece():
+	#reset variables
+	cur_pos = START_POS
+	active_piece = piece_type[rotation_index]
+	draw_piece(active_piece, cur_pos, piece_atlas)
+	
+	
+	
+	
 func draw_piece(piece, pos, atlas):
 	for i in piece:
 		set_cell(active_layer, pos + i, tile_id, atlas)
+
+
+	
