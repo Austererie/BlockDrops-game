@@ -20,7 +20,7 @@ var c_270 := [Vector2i(0,0), Vector2i(1,0), Vector2i(0,1), Vector2i(1,1)]
 var c := [c_0, c_90, c_180, c_270]
 
 var d_0 := [Vector2i(2,0), Vector2i(0,1), Vector2i(1,1), Vector2i(2,1)]
-var d_90 := [Vector2i(1,0), Vector2i(2,0), Vector2(1,1), Vector2i(1,2)]
+var d_90 := [Vector2i(1,0), Vector2i(2,0), Vector2i(1,1), Vector2i(1,2)]
 var d_180 := [Vector2i(0,1), Vector2i(1,1), Vector2i(2,1), Vector2i(2,2)]
 var d_270 := [Vector2i(1,0), Vector2i(1,1), Vector2i(0,2), Vector2i(1,2)]
 var d := [d_0, d_90, d_180, d_270]
@@ -33,7 +33,7 @@ var e := [e_0, e_90, e_180, e_270]
 
 var f_0 := [Vector2i(0,0), Vector2i(0,1), Vector2i(1,1), Vector2i(2,1)]
 var f_90 := [Vector2i(1,0), Vector2i(2,0), Vector2i(1,1), Vector2i(1,2)]
-var f_180 := [Vector2i(0,1), Vector2(1,1), Vector2i(2,1), Vector2i(2,2)]
+var f_180 := [Vector2i(0,1), Vector2i(1,1), Vector2i(2,1), Vector2i(2,2)]
 var f_270 := [Vector2i(1,0), Vector2i(1,1), Vector2i(0,2), Vector2i(1,2)]
 var f := [f_0, f_90, f_180, f_270]
 
@@ -51,8 +51,13 @@ const COLS : int = 10
 const ROWS : int = 20
 
 #Movement variables
+const DIRECTIONS := [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]
+var steps : Array
+const STEPS_REQ : int = 50
 const START_POS := Vector2i(5,1)
 var cur_pos : Vector2i
+var speed : float
+
 
 
 #Game piece variables
@@ -78,6 +83,10 @@ func _ready() -> void:
 	
 	
 func new_game():
+	#reset variables
+	speed = 1.0
+	steps = [0, 0, 0]
+	
 	piece_type = pick_piece()
 	piece_atlas = Vector2i(shapes_full.find(piece_type), 0)
 	create_piece()
@@ -86,7 +95,26 @@ func new_game():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if Input.is_action_pressed("ui_left"):
+		steps[0] += 10
+	elif Input.is_action_pressed("ui_right"):
+		steps[1] += 10
+	elif Input.is_action_pressed("ui_down"):
+		steps[2] += 10
+	elif Input.is_action_pressed("ui_up"):
+		rotate_piece()
+		
+	#apply downard movement everyframe
+	steps[2] += speed
+	#move piecce
+	for i in range(steps.size()):
+		if steps[i] > STEPS_REQ:
+			move_piece(DIRECTIONS[i])
+			steps[i] = 0
+		
+		
+	
+
 
 func pick_piece():
 	var piece
@@ -104,13 +132,50 @@ func create_piece():
 	cur_pos = START_POS
 	active_piece = piece_type[rotation_index]
 	draw_piece(active_piece, cur_pos, piece_atlas)
-	
-	
-	
+
+func clear_piece():
+	for i in active_piece:
+		erase_cell(active_layer, cur_pos + i)
+		
 	
 func draw_piece(piece, pos, atlas):
 	for i in piece:
 		set_cell(active_layer, pos + i, tile_id, atlas)
 
-
+func move_piece(dir):
+	if can_move(dir):
+		clear_piece()
+		cur_pos += dir
+		draw_piece(active_piece, cur_pos, piece_atlas)
 	
+func rotate_piece():
+	if can_rotate():
+		clear_piece()
+		rotation_index = (rotation_index + 1) % 4
+		active_piece = piece_type[rotation_index]
+		draw_piece(active_piece, cur_pos, piece_atlas)
+	
+	
+	
+	
+func can_move(dir):
+	#check if there is space to move
+	var cm = true
+	for i in active_piece:
+		if not is_free(i + cur_pos + dir):
+			cm = false
+	return cm
+
+func can_rotate():
+	var cr = true
+	var temp_rotation_index = (rotation_index + 1) % 4
+	for i in piece_type[temp_rotation_index]:
+		if not is_free(i + cur_pos):
+			cr = false
+	return cr
+			
+		
+	
+	
+func is_free(pos):
+	return get_cell_source_id(board_layer, pos) == -1
