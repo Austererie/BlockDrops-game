@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcbav4tovgd5s"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8psd8"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.187176, 0.187176, 0.187176, 1)
+
+[node name="HUD" type="CanvasLayer"]
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = 425.0
+offset_top = 150.0
+offset_right = 625.0
+offset_bottom = 300.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8psd8")
+
+[node name="nextLabel" type="Label" parent="."]
+offset_left = 430.0
+offset_top = 100.0
+offset_right = 610.0
+offset_bottom = 145.0
+theme_override_font_sizes/font_size = 27
+text = "NEXT PIECE:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="gameOverLabel" type="Label" parent="."]
+offset_left = 80.0
+offset_top = 300.0
+offset_right = 260.0
+offset_bottom = 342.0
+theme_override_font_sizes/font_size = 30
+text = "GAME OVER!"
+
+[node name="scoreLabel" type="Label" parent="."]
+offset_left = 480.0
+offset_top = 350.0
+offset_right = 549.0
+offset_bottom = 378.0
+theme_override_font_sizes/font_size = 25
+text = "SCORE:"
+
+[node name="startButton" type="Button" parent="."]
+offset_left = 430.0
+offset_top = 500.0
+offset_right = 610.0
+offset_bottom = 540.0
+theme_override_font_sizes/font_size = 30
+text = "NEW GAME"
