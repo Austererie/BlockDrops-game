@@ -155,6 +155,7 @@ func move_piece(dir):
 	else:
 		if dir == Vector2i.DOWN:
 			land_piece()
+			check_rows()
 			piece_type = next_piece_type
 			piece_atlas = next_piece_atlas
 			next_piece_type = pick_piece()
@@ -202,3 +203,27 @@ func clear_panel():
 		for j in range(5, 9):
 			erase_cell(active_layer, Vector2i(i, j))
 		
+func check_rows():
+	var row : int = ROWS
+	while row > 0:
+		var count = 0
+		for i in range(COLS):
+			if not is_free(Vector2i(i + 1, row)):
+				count+=1
+		if count == COLS:
+			shift_rows(row)
+		else:
+			row -= 1
+
+func shift_rows(row):
+	var atlas
+	for i in range(row, 1, -1):
+		for j in COLS:
+			atlas = get_cell_atlas_coords(board_layer, Vector2i(j + 1, i - 1))
+			if atlas == Vector2i(-1, -1):
+				erase_cell(board_layer, Vector2i(j +1, i))
+			else:
+				set_cell(board_layer, Vector2i(j + 1, i), tile_id, atlas)
+		
+		
+				
