@@ -66,6 +66,12 @@ var next_piece_type
 var rotation_index : int = 0
 var active_piece: Array
 
+#game variables
+var score : int
+const REWARD : int = 100
+
+
+
 #Tilemap variables
 var tile_id : int = 0
 var piece_atlas : Vector2i
@@ -84,6 +90,7 @@ func _ready() -> void:
 	
 func new_game():
 	#reset variables
+	score = 0
 	speed = 1.0
 	steps = [0, 0, 0]
 	$HUD.get_node("gameOverLabel").hide()
@@ -212,6 +219,8 @@ func check_rows():
 				count+=1
 		if count == COLS:
 			shift_rows(row)
+			score += REWARD
+			$HUD.get_node("scoreLabel").text = "SCORE: " + str(score)
 		else:
 			row -= 1
 
@@ -221,7 +230,7 @@ func shift_rows(row):
 		for j in COLS:
 			atlas = get_cell_atlas_coords(board_layer, Vector2i(j + 1, i - 1))
 			if atlas == Vector2i(-1, -1):
-				erase_cell(board_layer, Vector2i(j +1, i))
+				erase_cell(board_layer, Vector2i(j + 1, i))
 			else:
 				set_cell(board_layer, Vector2i(j + 1, i), tile_id, atlas)
 		
